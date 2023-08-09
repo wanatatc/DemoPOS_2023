@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { swalError, swalSuccess } from "../../_common";
 import ProductGroupForm from "../components/ProductGroupForm";
 import { useProductGroupGet, useProductGroupUpdate } from "../productApi";
+import { ProductGroupRequestDto } from "../productapi.client";
 
 const ProductGroupPage = () => {
     const { id } = useParams();
@@ -24,21 +25,24 @@ const ProductGroupPage = () => {
     const { data, isLoading, isError } = useProductGroupGet(id ?? "");
     const { mutate } = useProductGroupUpdate(id ?? "", onSuccessCallback, onErrorCallback);
 
-    const { productGroupName, productGroupId } = data?.data ?? {};
-
-    const formik = useFormik({
+    const formik = useFormik<ProductGroupRequestDto>({
         enableReinitialize: true,
         initialValues: {
-            name: productGroupName,
+            productGroupName: data?.data?.productGroupName ?? "",
         },
         onSubmit: (values) => {
-            console.log(values);
+            mutate(values);
         },
     });
 
+    const { productGroupId, productGroupName } = data?.data ?? { productGroupId: "", productGroupName: "" };
+
     return (
-        <Paper>
-            <Typography variant="h4">{productGroupId}</Typography>
+        <Paper sx={{ p: 3 }} elevation={3}>
+            <Typography variant="h4" gutterBottom>
+                Edit {productGroupName}
+            </Typography>
+            Product Group ID: {productGroupId}
             <ProductGroupForm formik={formik} />
         </Paper>
     );

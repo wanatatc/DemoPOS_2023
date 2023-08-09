@@ -1,4 +1,6 @@
 import { PermissionList } from "../../Const";
+import IndexPage from "../modules/Product/pages/IndexPage";
+import ProductGroupPage from "../modules/Product/pages/ProductGroupPage";
 import BlankPage from "../pages/BlankPage";
 import { RouteMapType } from "./AuthRoutes";
 
@@ -31,6 +33,22 @@ const Routes: RouteMapType[] = [
         element: <BlankPage body="Test Permission" />,
         permissions: [PermissionList.employee_read, PermissionList.employee_write],
         condition: "AND",
+    },
+    {
+        path: "/product-group",
+        title: "Product Group",
+        children: [
+            {
+                index: true,
+                title: "All Product Group",
+                element: <IndexPage />,
+            },
+            {
+                path: "/product-group/:id",
+                title: "Product Group Detail",
+                element: <ProductGroupPage />,
+            },
+        ],
     },
 ];
 

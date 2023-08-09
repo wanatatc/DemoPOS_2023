@@ -3,8 +3,6 @@ import axios from "axios";
 import { API_URL } from "../../../Const";
 import { ProductClient, ProductGroupRequestDto, ProductGroupResponseDtoServiceResponse } from "./productapi.client";
 
-const queryClient = useQueryClient();
-
 const productClient = new ProductClient(API_URL, axios);
 
 const productGroupGetAllQueryKey = "ProductGroupGetAll";
@@ -19,7 +17,7 @@ export const useProductGroupGetAll = (
     sortColumn?: string | undefined,
     ordering?: string | undefined
 ) => {
-    return useQuery([productGroupGetAllQueryKey], () =>
+    return useQuery([productGroupGetAllQueryKey, page, recordsPerPage, column, contain, sortColumn, ordering], () =>
         productClient.productGroupGetAll(page, recordsPerPage, column, contain, sortColumn, ordering)
     );
 };
@@ -34,6 +32,8 @@ export const useProductGroupCreate = (
     onSuccessCallback: (data: ProductGroupResponseDtoServiceResponse) => void,
     onErrorCallback: (error: string) => void
 ) => {
+    const queryClient = useQueryClient();
+
     return useMutation((body?: ProductGroupRequestDto) => productClient.productGroupCreate(body), {
         onSuccess: (response: ProductGroupResponseDtoServiceResponse) => {
             // Invalidate and refetch
@@ -57,6 +57,8 @@ export const useProductGroupUpdate = (
     onSuccessCallback: (data: ProductGroupResponseDtoServiceResponse) => void,
     onErrorCallback: (error: string) => void
 ) => {
+    const queryClient = useQueryClient();
+
     return useMutation((body?: ProductGroupRequestDto) => productClient.productGroupUpdate(id, body), {
         onSuccess: (response: ProductGroupResponseDtoServiceResponse) => {
             // Invalidate and refetch

@@ -22,7 +22,10 @@ const productSlice = createSlice({
             state.productGroupCreatePopup = action.payload;
         },
         setPagination: (state, action: PayloadAction<PaginationSortableDto>) => {
-            state.productGroupPagination = action.payload;
+            state.productGroupPagination = {
+                ...state.productGroupPagination,
+                ...action.payload,
+            };
         },
     },
 });

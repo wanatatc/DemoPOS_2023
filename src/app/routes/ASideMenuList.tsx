@@ -46,9 +46,12 @@ export const ASideMenuList = () => {
                 {/* ใส่เมนูเพิ่มที่นี่ */}
 
                 <MenuItem path="/" icon="home" text="Home" permissions={[]} />
-                <ParentMenu icon={<FontAwesomeIcon icon="cube" />} text="Parent Menu">
-                    <MenuItem path="/test-permission" icon="home" text="Test Permission" />
-                </ParentMenu>
+                <MenuItem
+                    path="/product-group"
+                    icon={<FontAwesomeIcon icon="cube" />}
+                    text="Product Group"
+                    permissions={[]}
+                />
             </ASideMenuListContainer>
         </ASideMenuListDrawer>
     );

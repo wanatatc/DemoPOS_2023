@@ -9,7 +9,7 @@ type ProductGroupFormProps = {
 const ProductGroupForm = ({ formik }: ProductGroupFormProps) => {
     return (
         <form onSubmit={formik.handleSubmit}>
-            <FormikTextField formik={formik} name="name" label="Name" />
+            <FormikTextField formik={formik} name="productGroupName" label="Name" />
             <Button type="submit">Submit</Button>
         </form>
     );
