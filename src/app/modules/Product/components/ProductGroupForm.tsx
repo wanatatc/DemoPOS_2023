@@ -3,10 +3,12 @@ import { FormikProps } from "formik";
 import { FormikTextField } from "../../_common";
 
 type ProductGroupFormProps = {
-    formik: FormikProps<any>;
+    formik?: FormikProps<any>;
 };
 
 const ProductGroupForm = ({ formik }: ProductGroupFormProps) => {
+    if (!formik) return null;
+
     return (
         <form onSubmit={formik.handleSubmit}>
             <FormikTextField formik={formik} name="productGroupName" label="Name" />

@@ -1,18 +1,15 @@
 import { Button, Dialog, Divider, Grid, Icon, Paper, Typography } from "@mui/material";
-import { FormikErrors, useFormik } from "formik";
 import { useAppDispatch, useAppSelector } from "../../../../redux";
 import { swalError, swalSuccess } from "../../_common";
 import { ProductGroupDatatable } from "../components/ProductGroupDatatable";
 import ProductGroupForm from "../components/ProductGroupForm";
-import { useProductGroupCreate } from "../productApi";
 import { productSelector, setProductGroupCreatePopup } from "../productSlice";
-import { ProductGroupRequestDto } from "../productapi.client";
 
 const IndexPage = () => {
     const dispatch = useAppDispatch();
 
     const handlePopup = (open: boolean) => {
-        formik.resetForm();
+        // formik.resetForm();
         dispatch(setProductGroupCreatePopup(open));
     };
 
@@ -27,25 +24,9 @@ const IndexPage = () => {
         swalError("Error", error);
     };
 
-    const { mutate } = useProductGroupCreate(onSuccessCallback, onErrorCallback);
+    // use mutation
 
-    const formik = useFormik<ProductGroupRequestDto>({
-        initialValues: {
-            productGroupName: "",
-        },
-        onSubmit: (values) => {
-            mutate(values);
-        },
-        validate: (values) => {
-            const errors: FormikErrors<ProductGroupRequestDto> = {};
-
-            if (!values.productGroupName) {
-                errors.productGroupName = "Required";
-            }
-
-            return errors;
-        },
-    });
+    // create formik
 
     return (
         <Paper sx={{ p: 3 }} elevation={3}>
@@ -67,7 +48,7 @@ const IndexPage = () => {
                     <Typography variant="h5" gutterBottom>
                         Create Product Group
                     </Typography>
-                    <ProductGroupForm formik={formik} />
+                    <ProductGroupForm />
                 </Paper>
             </Dialog>
         </Paper>

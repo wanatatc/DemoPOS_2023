@@ -1,10 +1,7 @@
 import { Paper, Typography } from "@mui/material";
-import { useFormik } from "formik";
 import { useNavigate, useParams } from "react-router-dom";
 import { swalError, swalSuccess } from "../../_common";
 import ProductGroupForm from "../components/ProductGroupForm";
-import { useProductGroupGet, useProductGroupUpdate } from "../productApi";
-import { ProductGroupRequestDto } from "../productapi.client";
 
 const ProductGroupPage = () => {
     const { id } = useParams();
@@ -18,24 +15,17 @@ const ProductGroupPage = () => {
 
     const onErrorCallback = (error: string) => {
         swalError("Error", error).then(() => {
-            formik.resetForm();
+            // formik.resetForm();
         });
     };
 
-    const { data, isLoading, isError } = useProductGroupGet(id ?? "");
-    const { mutate } = useProductGroupUpdate(id ?? "", onSuccessCallback, onErrorCallback);
+    // use query
 
-    const formik = useFormik<ProductGroupRequestDto>({
-        enableReinitialize: true,
-        initialValues: {
-            productGroupName: data?.data?.productGroupName ?? "",
-        },
-        onSubmit: (values) => {
-            mutate(values);
-        },
-    });
+    // use mutation
 
-    const { productGroupId, productGroupName } = data?.data ?? { productGroupId: "", productGroupName: "" };
+    // create formik
+
+    const { productGroupId, productGroupName } = { productGroupId: "", productGroupName: "" };
 
     return (
         <Paper sx={{ p: 3 }} elevation={3}>
@@ -43,7 +33,7 @@ const ProductGroupPage = () => {
                 Edit {productGroupName == "" ? "Product Group" : productGroupName}
             </Typography>
             Product Group ID: {productGroupId}
-            <ProductGroupForm formik={formik} />
+            <ProductGroupForm />
         </Paper>
     );
 };

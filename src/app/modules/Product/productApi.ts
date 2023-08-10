@@ -1,79 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { API_URL } from "../../../Const";
-import { ProductClient, ProductGroupRequestDto, ProductGroupResponseDtoServiceResponse } from "./productapi.client";
-
-const productClient = new ProductClient(API_URL, axios);
-
-const productGroupGetAllQueryKey = "ProductGroupGetAll";
-const productGroupGetQueryKey = "ProductGroupGet";
+// import axios from "axios";
+// import { API_URL } from "../../../Const";
 
 // ProductGroupGetAll
-export const useProductGroupGetAll = (
-    page?: number | undefined,
-    recordsPerPage?: number | undefined,
-    column?: string | undefined,
-    contain?: string | undefined,
-    sortColumn?: string | undefined,
-    ordering?: string | undefined
-) => {
-    return useQuery([productGroupGetAllQueryKey, page, recordsPerPage, column, contain, sortColumn, ordering], () =>
-        productClient.productGroupGetAll(page, recordsPerPage, column, contain, sortColumn, ordering)
-    );
-};
+export const useProductGroupGetAll = () => { };
 
 // ProductGroupGet
-export const useProductGroupGet = (id: string) => {
-    return useQuery([productGroupGetQueryKey, id], () => productClient.productGroupGet(id));
-};
+export const useProductGroupGet = () => { };
 
 // ProductGroupCreate
-export const useProductGroupCreate = (
-    onSuccessCallback: (data: ProductGroupResponseDtoServiceResponse) => void,
-    onErrorCallback: (error: string) => void
-) => {
-    const queryClient = useQueryClient();
-
-    return useMutation((body?: ProductGroupRequestDto) => productClient.productGroupCreate(body), {
-        onSuccess: (response: ProductGroupResponseDtoServiceResponse) => {
-            // Invalidate and refetch
-            if (!response.isSuccess) onErrorCallback(response.message || response.exceptionMessage || "Unknown error");
-            else onSuccessCallback(response);
-
-            queryClient.invalidateQueries([productGroupGetAllQueryKey]);
-        },
-        onError: (error: Error) => {
-            // Error logic
-            onErrorCallback && onErrorCallback(error.message);
-
-            queryClient.invalidateQueries([productGroupGetAllQueryKey]);
-        },
-    });
-};
+export const useProductGroupCreate = () => { };
 
 // ProductGroupUpdate
-export const useProductGroupUpdate = (
-    id: string,
-    onSuccessCallback: (data: ProductGroupResponseDtoServiceResponse) => void,
-    onErrorCallback: (error: string) => void
-) => {
-    const queryClient = useQueryClient();
-
-    return useMutation((body?: ProductGroupRequestDto) => productClient.productGroupUpdate(id, body), {
-        onSuccess: (response: ProductGroupResponseDtoServiceResponse) => {
-            // Invalidate and refetch
-            if (!response.isSuccess) onErrorCallback(response.message || response.exceptionMessage || "Unknown error");
-            else onSuccessCallback(response);
-
-            queryClient.invalidateQueries([productGroupGetAllQueryKey]);
-            queryClient.invalidateQueries([productGroupGetQueryKey, id]);
-        },
-        onError: (error: Error) => {
-            // Error logic
-            onErrorCallback && onErrorCallback(error.message);
-
-            queryClient.invalidateQueries([productGroupGetAllQueryKey]);
-            queryClient.invalidateQueries([productGroupGetQueryKey, id]);
-        },
-    });
-};
+export const useProductGroupUpdate = () => { };
