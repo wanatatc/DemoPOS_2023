@@ -1,6 +1,6 @@
-import { Button, Dialog, Divider, Grid, Paper, Typography } from "@mui/material";
+import { Button, Dialog, Divider, Grid, Icon, Paper, Typography } from "@mui/material";
+import { FormikErrors, useFormik } from "formik";
 import { MUIDataTableColumnDef, MUIDataTableMeta } from "mui-datatables";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../redux";
 import {
@@ -11,26 +11,20 @@ import {
     swalError,
     swalSuccess,
 } from "../../_common";
+import ProductGroupForm from "../components/ProductGroupForm";
 import { useProductGroupCreate, useProductGroupGetAll } from "../productApi";
 import { productSelector, setPagination, setProductGroupCreatePopup } from "../productSlice";
-import ProductGroupForm from "../components/ProductGroupForm";
-import { useFormik } from "formik";
-import { ProductGroupResponseDto } from "../productapi.client";
+import { ProductGroupRequestDto, ProductGroupResponseDto } from "../productapi.client";
 
-const IndexPage = () => {
-    const navigate = useNavigate();
+function ProductGroupDatatable() {
     const dispatch = useAppDispatch();
-
-    const { productGroupCreatePopup, productGroupPagination } = useAppSelector(productSelector);
+    const navigate = useNavigate();
 
     const handleEdit = (id: string | undefined) => {
         navigate(`/product-group/${id}`);
     };
 
-    const handlePopup = (open: boolean) => {
-        formik.resetForm();
-        dispatch(setProductGroupCreatePopup(open));
-    };
+    const { productGroupPagination } = useAppSelector(productSelector);
 
     const handlePagination: React.Dispatch<React.SetStateAction<PaginationSortableDto>> = (newPaginate) => {
         if (typeof newPaginate == "function") {
@@ -40,21 +34,10 @@ const IndexPage = () => {
         }
     };
 
-    const onSuccessCallback = () => {
-        handlePopup(false);
-        swalSuccess("Success", "Create Product Group Success");
-    };
-
-    const onErrorCallback = (error: string) => {
-        swalError("Error", error);
-    };
-
     const { data, isLoading, isError } = useProductGroupGetAll(
         productGroupPagination.page,
         productGroupPagination.recordsPerPage
     );
-
-    const { mutate } = useProductGroupCreate(onSuccessCallback, onErrorCallback);
 
     const pagination: PaginationResultDto = {
         currentPage: data?.currentPage ?? 1,
@@ -90,12 +73,56 @@ const IndexPage = () => {
         },
     ];
 
-    const formik = useFormik({
+    return (
+        <LoadingPlaceHolder isLoading={isLoading} isError={isError}>
+            <StandardDataTable
+                name="Product Group"
+                color="primary"
+                data={data?.data ?? []}
+                columns={columns}
+                paginated={pagination}
+                setPaginated={handlePagination}
+            />
+        </LoadingPlaceHolder>
+    );
+}
+
+const IndexPage = () => {
+    const dispatch = useAppDispatch();
+
+    const handlePopup = (open: boolean) => {
+        formik.resetForm();
+        dispatch(setProductGroupCreatePopup(open));
+    };
+
+    const { productGroupCreatePopup } = useAppSelector(productSelector);
+
+    const onSuccessCallback = () => {
+        handlePopup(false);
+        swalSuccess("Success", "Create Product Group Success");
+    };
+
+    const onErrorCallback = (error: string) => {
+        swalError("Error", error);
+    };
+
+    const { mutate } = useProductGroupCreate(onSuccessCallback, onErrorCallback);
+
+    const formik = useFormik<ProductGroupRequestDto>({
         initialValues: {
             productGroupName: "",
         },
         onSubmit: (values) => {
             mutate(values);
+        },
+        validate: (values) => {
+            const errors: FormikErrors<ProductGroupRequestDto> = {};
+
+            if (!values.productGroupName) {
+                errors.productGroupName = "Required";
+            }
+
+            return errors;
         },
     });
 
@@ -106,23 +133,21 @@ const IndexPage = () => {
                     <Typography variant="h4">Product Group</Typography>
                 </Grid>
                 <Grid xs={4} item container justifyContent="flex-end">
-                    <Button onClick={() => handlePopup(true)}>Create</Button>
+                    <Button onClick={() => handlePopup(true)} startIcon={<Icon>add_circle</Icon>}>
+                        Create
+                    </Button>
                 </Grid>
             </Grid>
             <Divider sx={{ mt: 1, mb: 3 }} />
-            <LoadingPlaceHolder isLoading={isLoading} isError={isError}>
-                <StandardDataTable
-                    name="Product Group"
-                    data={data?.data ?? []}
-                    columns={columns}
-                    paginated={pagination}
-                    setPaginated={handlePagination}
-                />
-            </LoadingPlaceHolder>
+            <ProductGroupDatatable />
 
-            <Dialog open={productGroupCreatePopup} onClose={() => handlePopup(false)} sx={{ p: 3 }}>
-                <Typography variant="h4">Create Product Group</Typography>
-                <ProductGroupForm formik={formik} />
+            <Dialog open={productGroupCreatePopup} onClose={() => handlePopup(false)} fullWidth maxWidth={"md"}>
+                <Paper sx={{ p: 3 }} elevation={3}>
+                    <Typography variant="h5" gutterBottom>
+                        Create Product Group
+                    </Typography>
+                    <ProductGroupForm formik={formik} />
+                </Paper>
             </Dialog>
         </Paper>
     );

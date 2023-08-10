@@ -40,7 +40,7 @@ const ProductGroupPage = () => {
     return (
         <Paper sx={{ p: 3 }} elevation={3}>
             <Typography variant="h4" gutterBottom>
-                Edit {productGroupName}
+                Edit {productGroupName == "" ? "Product Group" : productGroupName}
             </Typography>
             Product Group ID: {productGroupId}
             <ProductGroupForm formik={formik} />
